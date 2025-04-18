@@ -30,6 +30,12 @@ export function DocsSidebar({ spec, slug }: DocsSidebarProps) {
   const operationsByTag = getOperationsByTag(spec)
   const isDemo = slug === "demo"
 
+  // Helper function to encode path segments properly
+  const encodePathSegment = (segment: string) => {
+    // Encode the segment, preserving the curly braces for display
+    return segment.replace(/\{([^}]+)\}/g, (match) => encodeURIComponent(match))
+  }
+
   return (
     <ScrollArea className="h-[calc(100vh-4rem)]">
       <div className="flex flex-col gap-1 p-4">
@@ -86,9 +92,15 @@ export function DocsSidebar({ spec, slug }: DocsSidebarProps) {
                   {expandedTags[tag] && (
                     <div className="ml-6 mt-1 space-y-1">
                       {operations.map((op, index) => {
+                        // Encode each path segment separately
+                        const encodedPathSegments = op.path
+                          .split("/")
+                          .filter((segment) => segment) // Remove empty segments
+                          .map(encodePathSegment)
+
                         const endpointPath = isDemo
-                          ? `/demo/endpoint${op.path}/${op.method}`
-                          : `/docs/${slug}/paths${op.path}/${op.method}`
+                          ? `/demo/endpoint/${encodedPathSegments.join("/")}/${op.method}`
+                          : `/docs/${slug}/paths/${encodedPathSegments.join("/")}/${op.method}`
 
                         return (
                           <Button

@@ -1,11 +1,7 @@
-import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { DocsSidebar } from "@/components/docs/docs-sidebar"
-import { DocsHeader } from "@/components/docs/docs-header"
+import { DocsLayout } from "@/components/docs/docs-layout"
 import { parseOpenAPISpec } from "@/lib/openapi-parser"
 import { sampleOpenAPI } from "@/lib/sample-openapi"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function DemoServersPage() {
   const spec = parseOpenAPISpec(sampleOpenAPI)
@@ -16,79 +12,63 @@ export default function DemoServersPage() {
 
   if (!spec.servers || spec.servers.length === 0) {
     return (
-      <div className="flex min-h-screen flex-col">
-        <DocsHeader projectName="Demo API Documentation" projectSlug="demo" />
-        <div className="container flex-1 items-start md:grid md:grid-cols-[240px_1fr] lg:grid-cols-[280px_1fr]">
-          <aside className="fixed top-16 z-30 hidden h-[calc(100vh-4rem)] w-full shrink-0 border-r md:sticky md:block">
-            <DocsSidebar spec={spec} slug="demo" />
-          </aside>
-          <main className="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px]">
-            <div className="mx-auto w-full min-w-0">
-              <div className="mb-4 flex items-center">
-                <Button variant="outline" size="sm" asChild className="mr-4">
-                  <Link href="/demo">
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back to Demo
-                  </Link>
-                </Button>
-                <div className="rounded-md bg-blue-100 px-4 py-2 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                  Demo Documentation
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                <h1 className="scroll-m-20 text-4xl font-bold tracking-tight">Servers</h1>
-                <p>No servers defined in the OpenAPI specification.</p>
-              </div>
-            </div>
-          </main>
+      <DocsLayout spec={spec} projectName="Demo API Documentation" projectSlug="demo">
+        <div className="space-y-4">
+          <h1 className="text-3xl font-bold">Servers</h1>
+          <div className="rounded-lg border p-6 text-center">
+            <p className="text-muted-foreground">No servers defined in the OpenAPI specification.</p>
+          </div>
         </div>
-      </div>
+      </DocsLayout>
     )
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <DocsHeader projectName="Demo API Documentation" projectSlug="demo" />
-      <div className="container flex-1 items-start md:grid md:grid-cols-[240px_1fr] lg:grid-cols-[280px_1fr]">
-        <aside className="fixed top-16 z-30 hidden h-[calc(100vh-4rem)] w-full shrink-0 border-r md:sticky md:block">
-          <DocsSidebar spec={spec} slug="demo" />
-        </aside>
-        <main className="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px]">
-          <div className="mx-auto w-full min-w-0">
-            <div className="mb-4 flex items-center">
-              <Button variant="outline" size="sm" asChild className="mr-4">
-                <Link href="/demo">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Demo
-                </Link>
-              </Button>
-              <div className="rounded-md bg-blue-100 px-4 py-2 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                Demo Documentation
-              </div>
-            </div>
+    <DocsLayout spec={spec} projectName="Demo API Documentation" projectSlug="demo">
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold">Servers</h1>
+        <p className="text-lg text-muted-foreground">Available servers for the API.</p>
 
-            <div className="space-y-6">
-              <h1 className="scroll-m-20 text-4xl font-bold tracking-tight">Servers</h1>
-              <p className="text-lg text-muted-foreground">Available servers for the API.</p>
+        <div className="grid gap-4 md:grid-cols-2">
+          {spec.servers.map((server, index) => (
+            <Card key={index}>
+              <CardHeader>
+                <CardTitle>Server {index + 1}</CardTitle>
+                {server.description && <CardDescription>{server.description}</CardDescription>}
+              </CardHeader>
+              <CardContent>
+                <pre className="rounded-md bg-muted p-4 overflow-auto font-mono text-sm">{server.url}</pre>
 
-              <div className="grid gap-4">
-                {spec.servers.map((server, index) => (
-                  <Card key={index}>
-                    <CardHeader>
-                      <CardTitle>Server {index + 1}</CardTitle>
-                      {server.description && <CardDescription>{server.description}</CardDescription>}
-                    </CardHeader>
-                    <CardContent>
-                      <pre className="rounded-md bg-muted p-4 overflow-auto">{server.url}</pre>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          </div>
-        </main>
+                {server.variables && (
+                  <div className="mt-4 space-y-2">
+                    <h3 className="text-sm font-medium">Variables</h3>
+                    <div className="rounded-md border">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b">
+                            <th className="px-4 py-2 text-left text-sm">Name</th>
+                            <th className="px-4 py-2 text-left text-sm">Default</th>
+                            <th className="px-4 py-2 text-left text-sm">Description</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Object.entries(server.variables).map(([name, variable]: [string, any]) => (
+                            <tr key={name} className="border-b last:border-0">
+                              <td className="px-4 py-2 font-mono text-sm">{name}</td>
+                              <td className="px-4 py-2 font-mono text-sm">{variable.default}</td>
+                              <td className="px-4 py-2 text-sm">{variable.description || "-"}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
-    </div>
+    </DocsLayout>
   )
 }

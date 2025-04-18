@@ -89,21 +89,29 @@ export function TryItPanel({ path, method, operation, servers = [] }: TryItPanel
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {servers.length > 0 && (
-            <FormItem>
-              <FormLabel>Server</FormLabel>
-              <Select defaultValue={servers[0].url}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a server" />
-                </SelectTrigger>
-                <SelectContent>
-                  {servers.map((server, index) => (
-                    <SelectItem key={index} value={server.url}>
-                      {server.url}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormItem>
+            <FormField
+              control={form.control}
+              name="server"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Server</FormLabel>
+                  <Select defaultValue={servers[0].url} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a server" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {servers.map((server, index) => (
+                        <SelectItem key={index} value={server.url}>
+                          {server.url}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
           )}
 
           {pathParams.length > 0 && (

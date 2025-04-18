@@ -386,3 +386,6 @@ export const sampleOpenAPI = {
     },
   },
 }
+
+// Add the missing export
+export const sampleOpenAPISpec = sampleOpenAPI

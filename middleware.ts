@@ -1,30 +1,39 @@
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs"
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next()
-  const supabase = createMiddlewareClient({ req, res })
+export function middleware(request: NextRequest) {
+  // Get the pathname of the request
+  const path = request.nextUrl.pathname
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-
-  // If user is not signed in and the current path is not / or /login or /register,
-  // redirect the user to /login
-  if (!session && req.nextUrl.pathname.startsWith("/dashboard")) {
-    return NextResponse.redirect(new URL("/login", req.url))
+  // If it's the root path, redirect to the dashboard
+  if (path === "/") {
+    return NextResponse.next()
   }
 
-  // If user is signed in and the current path is /login or /register,
-  // redirect the user to /dashboard
-  if (session && (req.nextUrl.pathname === "/login" || req.nextUrl.pathname === "/register")) {
-    return NextResponse.redirect(new URL("/dashboard", req.url))
+  // Check if the path starts with /dashboard
+  const isAuthRequired = path.startsWith("/dashboard")
+
+  // Get the token from the cookies
+  const token = request.cookies.get("supabase-auth-token")?.value
+
+  // If the user is not authenticated and the path requires auth, redirect to login
+  if (isAuthRequired && !token) {
+    return NextResponse.redirect(new URL("/login", request.url))
   }
 
-  return res
+  return NextResponse.next()
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/register"],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public (public files)
+     * - api (API routes)
+     */
+    "/((?!_next/static|_next/image|favicon.ico|public|api).*)",
+  ],
 }

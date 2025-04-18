@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 0 0% 9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 9%;
+
+    --primary: 24 95% 53%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 200 95% 48%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 0 84% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 24 95% 53%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 24 95% 53%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 200 95% 48%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+
+    --accent: 0 84% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 24 95% 53%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading font-bold;
+  }
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+  h2 {
+    @apply text-3xl md:text-4xl;
+  }
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+  h4 {
+    @apply text-xl md:text-2xl;
+  }
+  h5 {
+    @apply text-lg md:text-xl;
+  }
+  h6 {
+    @apply text-base md:text-lg;
+  }
+  code,
+  pre {
+    @apply font-mono;
+  }
+}
+
+@layer components {
+  /* Define each class separately to avoid nesting issues */
+  .dragon-gradient {
+    background-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--secondary)));
+    background-size: 200% auto;
+    animation: gradient-shift 3s ease infinite;
+  }
+
+  .dragon-text-gradient {
+    color: transparent;
+    background-clip: text;
+    background-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--secondary)));
+    background-size: 200% auto;
+    animation: gradient-shift 3s ease infinite;
+  }
+
+  .dragon-border-gradient {
+    border: 2px solid transparent;
+    background-origin: border-box;
+    background-clip: padding-box;
+    padding: 2px;
+    background-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--secondary)));
+    background-position: 0;
+    background-size: 200% auto;
+  }
+
+  .dragon-glow {
+    animation: fire-pulse 2s ease-in-out infinite;
+  }
+
+  .drag-indicator {
+    @apply border-2 rounded-md border-dashed transition-all duration-200;
+  }
+
+  .drag-indicator-idle {
+    @apply border-neutral-300 dark:border-neutral-700;
+  }
+
+  .drag-indicator-active {
+    @apply border-primary bg-primary/10;
+  }
+
+  .drag-indicator-hover {
+    @apply border-primary/70 bg-primary/5;
+  }
+
+  .drag-handle {
+    @apply cursor-move p-1 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors;
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes fire-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 5px 2px rgba(249, 115, 22, 0.4), 0 0 20px 4px rgba(249, 115, 22, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 8px 4px rgba(249, 115, 22, 0.6), 0 0 30px 8px rgba(249, 115, 22, 0.3);
+  }
+}
